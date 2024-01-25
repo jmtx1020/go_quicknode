@@ -6,7 +6,7 @@ import (
 	"github.com/jmtx1020/go_quicknode/client"
 )
 
-type Item struct {
+type Destination struct {
 	// Item fields
 }
 
