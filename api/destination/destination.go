@@ -1,21 +1,27 @@
 package destinations
 
 import (
-	"net/http"
+	"time"
 
-	"github.com/jmtx1020/go_quicknode/client"
+	"github.com/jmtx1020/go_quicknode/client/client.go"
 )
 
 type Destination struct {
-	// Item fields
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	To          string    `json:"to"`
+	WebhookType string    `json:"webhook_type"`
+	Service     string    `json:"service"`
+	Token       string    `json:"token"`
+	PayloadType int       `json:"payload_type"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type APIWrapper struct {
-	Client *http.Client
+type DestinationsAPI struct {
+	APIWrapper *client.APIWrapper
 }
 
-func NewAPIWrapper(apiToken string) *APIWrapper {
-	return &APIWrapper{
-		Client: client.NewAPIClient(apiToken),
-	}
+func NewDestinationsAPI(apiToken, baseURL string) *DestinationsAPI {
+	apiWrapper := client.NewAPIClient()
 }
