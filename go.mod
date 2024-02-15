@@ -1,3 +1,3 @@
-module jmtx1020/go_quicknode
+module github.com/jmtx1020/go_quicknode
 
 go 1.21.6
