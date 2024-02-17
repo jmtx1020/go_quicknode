@@ -2,11 +2,12 @@ package destinations
 
 import (
 	"github.com/jmtx1020/go_quicknode/client"
+	"os"
 	"testing"
 )
 
 func TestCreateDestination(t *testing.T) {
-	apiToken := "QN_5f3e75f0de08436087af3b0191b3c6dd"
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
 
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 	destinationAPI := &DestinationAPI{API: apiWrapper}
@@ -24,7 +25,7 @@ func TestCreateDestination(t *testing.T) {
 }
 
 func TestGetAllDestinationsIntegration(t *testing.T) {
-	apiToken := "QN_5f3e75f0de08436087af3b0191b3c6dd"
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
 
 	// Create a DestinationAPI instance with the real APIWrapper
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
@@ -40,7 +41,7 @@ func TestGetAllDestinationsIntegration(t *testing.T) {
 }
 
 func TestGetDestinationByID(t *testing.T) {
-	apiToken := "QN_5f3e75f0de08436087af3b0191b3c6dd"
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 
 	destinationAPI := &DestinationAPI{API: apiWrapper}
@@ -57,7 +58,7 @@ func TestGetDestinationByID(t *testing.T) {
 }
 
 func TestDeleteDestinationByID(t *testing.T) {
-	apiToken := "QN_5f3e75f0de08436087af3b0191b3c6dd"
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
 
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 	destinationAPI := &DestinationAPI{API: apiWrapper}
