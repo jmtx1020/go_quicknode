@@ -59,6 +59,10 @@ func (d *DestinationAPI) GetAllDestinations() ([]Destination, error) {
 		return nil, err
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("error: %s", body)
+	}
+
 	var destinations []Destination
 	err = json.Unmarshal(body, &destinations)
 	if err != nil {
@@ -85,6 +89,10 @@ func (d *DestinationAPI) GetDestinationByID(destinationID string) (*Destination,
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("error: %s", body)
 	}
 
 	var destination Destination
@@ -130,6 +138,10 @@ func (d *DestinationAPI) CreateDestination(name, toURL, webhookType, service str
 		return nil, err
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("error: %s", body)
+	}
+
 	var destination Destination
 	err = json.Unmarshal(body, &destination)
 	if err != nil {
@@ -152,6 +164,15 @@ func (d *DestinationAPI) DeleteDestinationByID(destinationID string) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("error: %s", body)
+	}
 
 	return nil
 }

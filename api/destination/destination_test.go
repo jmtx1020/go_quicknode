@@ -1,7 +1,6 @@
 package destinations
 
 import (
-	"fmt"
 	"github.com/jmtx1020/go_quicknode/client"
 	"testing"
 )
@@ -12,7 +11,7 @@ func TestCreateDestination(t *testing.T) {
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	destination, err := destinationAPI.CreateDestination(
+	_, err := destinationAPI.CreateDestination(
 		"testing-go-api",
 		"https://us-central1-serious-truck-412423.cloudfunctions.net/function-1",
 		"POST",
@@ -22,8 +21,6 @@ func TestCreateDestination(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
-	fmt.Println(destination)
 }
 
 func TestGetAllDestinationsIntegration(t *testing.T) {
@@ -44,11 +41,16 @@ func TestGetAllDestinationsIntegration(t *testing.T) {
 
 func TestGetDestinationByID(t *testing.T) {
 	apiToken := "QN_5f3e75f0de08436087af3b0191b3c6dd"
-
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
+
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	_, err := destinationAPI.GetDestinationByID("bfb935e9-b87b-4f99-ab62-f22f249d30c6")
+	allDestinations, err := destinationAPI.GetAllDestinations()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	_, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -60,7 +62,12 @@ func TestDeleteDestinationByID(t *testing.T) {
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	err := destinationAPI.DeleteDestinationByID("bfb935e9-b87b-4f99-ab62-f22f249d30c6")
+	allDestinations, err := destinationAPI.GetAllDestinations()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	err = destinationAPI.DeleteDestinationByID(allDestinations[0].ID)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
