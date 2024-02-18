@@ -26,4 +26,4 @@ jobs:
         go-version: '1.21.6' # Change this to the version of Go you are using
 
     - name: Run tests
-      run: go test ./...
+      run: go test ./... -v
