@@ -1,0 +1,29 @@
+name: Go QuickNode API Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    env:
+      MY_SECRET: ${{ secrets.QUICKNODE_API_TOKEN= }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.21.6' # Change this to the version of Go you are using
+
+    - name: Run tests
+      run: go test ./...
