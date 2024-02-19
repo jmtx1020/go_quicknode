@@ -63,12 +63,18 @@ func TestDeleteDestinationByID(t *testing.T) {
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/destinations")
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	allDestinations, err := destinationAPI.GetAllDestinations()
+	dest1, err := destinationAPI.CreateDestination(
+		"testing-go-api",
+		"https://us-central1-serious-truck-412423.cloudfunctions.net/function-1",
+		"POST",
+		"webhook",
+		1,
+	)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	err = destinationAPI.DeleteDestinationByID(allDestinations[0].ID)
+	err = destinationAPI.DeleteDestinationByID(dest1.ID)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
