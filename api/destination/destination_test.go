@@ -1,4 +1,4 @@
-package destinations
+package destination
 
 import (
 	"github.com/jmtx1020/go_quicknode/client"
