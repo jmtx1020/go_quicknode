@@ -327,7 +327,6 @@ func (n *NotificationAPI) ValidateExpression(expression, network string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(payloadBytes))
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(payloadBytes))
 	if err != nil {
