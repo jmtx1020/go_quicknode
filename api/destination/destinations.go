@@ -1,4 +1,4 @@
-package destination
+package destinations
 
 import (
 	"bytes"
