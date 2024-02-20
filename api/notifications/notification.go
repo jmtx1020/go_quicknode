@@ -58,6 +58,24 @@ type NotificationValidationPayload struct {
 	Network    string `json:"network"`
 }
 
+type NotificationBackTestPayload struct {
+	Expression    string `json:"expression"`
+	Network       string `json:"network"`
+	BlockNumber   int    `json:"block_number"`
+	BackTestCount int    `json:"backtest_count"`
+}
+
+type NotificationBackTestExpressionResult struct {
+	BlockNumber   int      `json:"block_number"`
+	Evaluation    bool     `json:"evaluation"`
+	Network       string   `json:"network"`
+	MatchedHashes []string `json:"matched_hashes"`
+}
+
+type NotificationBackTestExpressionResults struct {
+	ExpressionResults []NotificationBackTestExpressionResult `json:"expression_result"`
+}
+
 type NotificationAPI struct {
 	API *client.APIWrapper
 }
@@ -350,4 +368,51 @@ func (n *NotificationAPI) ValidateExpression(expression, network string) error {
 	}
 
 	return nil
+}
+
+func (n *NotificationAPI) BackTestExpression(expression, network string, block_number, backtest_count int) (*NotificationBackTestExpressionResults, error) {
+	n.API.SetBaseURL("https://api.quicknode.com/quickalerts/rest/v1/notifications")
+	endpoint := fmt.Sprintf("%s/backtest", n.API.BaseURL)
+
+	payload := NotificationBackTestPayload{
+		Expression:    expression,
+		Network:       network,
+		BlockNumber:   block_number,
+		BackTestCount: backtest_count,
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(string(payloadBytes))
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := n.API.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("error: %s", body)
+	}
+
+	var expressionResults NotificationBackTestExpressionResults
+	err = json.Unmarshal(body, &expressionResults)
+	if err != nil {
+		return nil, err
+	}
+	return &expressionResults, nil
 }

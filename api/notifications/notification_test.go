@@ -1,6 +1,7 @@
 package notifications
 
 import (
+	"fmt"
 	"github.com/jmtx1020/go_quicknode/api/destinations"
 	"github.com/jmtx1020/go_quicknode/client"
 	"os"
@@ -212,4 +213,22 @@ func TestValidateExpression(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
+}
+
+func TestBackTestExpression(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+
+	notificationAPI := NewNotificationAPI(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/notifications")
+
+	bt_result, err := notificationAPI.BackTestExpression(
+		"dHhfdG8gPT0gJzB4ZDhkQTZCRjI2OTY0YUY5RDdlRWQ5ZTAzRTUzNDE1RDM3YUE5NjA0NSc=",
+		"ethereum-mainnet",
+		12345678,
+		10,
+	)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	fmt.Println(bt_result)
 }
