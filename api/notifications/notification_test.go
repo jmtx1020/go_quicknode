@@ -1,7 +1,6 @@
 package notifications
 
 import (
-	"fmt"
 	"github.com/jmtx1020/go_quicknode/api/destinations"
 	"github.com/jmtx1020/go_quicknode/client"
 	"os"
