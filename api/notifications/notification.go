@@ -386,8 +386,6 @@ func (n *NotificationAPI) BackTestExpression(expression, network string, block_n
 		return nil, err
 	}
 
-	fmt.Println(string(payloadBytes))
-
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(payloadBytes))
 	if err != nil {
 		return nil, err

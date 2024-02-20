@@ -220,7 +220,7 @@ func TestBackTestExpression(t *testing.T) {
 
 	notificationAPI := NewNotificationAPI(apiToken, "https://api.quicknode.com/quickalerts/rest/v1/notifications")
 
-	bt_result, err := notificationAPI.BackTestExpression(
+	_, err := notificationAPI.BackTestExpression(
 		"dHhfdG8gPT0gJzB4ZDhkQTZCRjI2OTY0YUY5RDdlRWQ5ZTAzRTUzNDE1RDM3YUE5NjA0NSc=",
 		"ethereum-mainnet",
 		12345678,
@@ -229,6 +229,4 @@ func TestBackTestExpression(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
-	fmt.Println(bt_result)
 }
