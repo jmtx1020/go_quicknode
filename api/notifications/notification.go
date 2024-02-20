@@ -3,12 +3,12 @@ package notifications
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/jmtx1020/go_quicknode/api/destinations"
+	"github.com/jmtx1020/go_quicknode/client"
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/jmtx1020/go_quicknode/api/destinations"
-	"github.com/jmtx1020/go_quicknode/client"
 )
 
 type NotificationData struct {
