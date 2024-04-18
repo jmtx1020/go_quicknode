@@ -25,7 +25,7 @@ func TestCreateGateway(t *testing.T) {
 
 	_, err := gatewayAPI.CreateGateway(
 		fmt.Sprintf("testing-api-%s", randomStr),
-		true,
+		false,
 		false,
 	)
 	if err != nil {
@@ -42,6 +42,34 @@ func TestGetAllGateways(t *testing.T) {
 	_, err := gatewayAPI.GetAllGateways()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestUpdateGatewayByName(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/gateway")
+	gatewayAPI := &GatewayAPI{API: apiWrapper}
+
+	gateways, err := gatewayAPI.GetAllGateways()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	testing_gateway := Gateway{}
+	for _, gateway := range gateways {
+		if strings.Contains(gateway.Name, "testing-api-") {
+			testing_gateway = gateway
+		}
+	}
+
+	updated_gateway, err := gatewayAPI.UpdateGatewayByName(testing_gateway.Name, true, false)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if updated_gateway.IsPrivate == testing_gateway.IsPrivate {
+		t.Errorf("Expected %v, got %v", updated_gateway.IsPrivate, testing_gateway.IsPrivate)
 	}
 }
 

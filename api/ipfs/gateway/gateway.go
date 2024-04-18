@@ -142,3 +142,46 @@ func (g *GatewayAPI) DeleteGatewayByName(gatewayName string) error {
 
 	return nil
 }
+
+func (g *GatewayAPI) UpdateGatewayByName(gatewayName string, isPrivate, isEnabled bool) (*Gateway, error) {
+	g.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/gateway")
+	endpoint := fmt.Sprintf("%s/%s", g.API.BaseURL, gatewayName)
+
+	payload := GatewayPayload{
+		Name:      gatewayName,
+		IsPrivate: isPrivate,
+		IsEnabled: isEnabled,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", endpoint, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := g.API.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("error: %s", body)
+	}
+
+	var gateway Gateway
+	err = json.Unmarshal(body, &gateway)
+	if err != nil {
+		return nil, err
+	}
+	return &gateway, nil
+}
