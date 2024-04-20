@@ -39,6 +39,18 @@ func TestCreatePinnedObject(t *testing.T) {
 	}
 }
 
+func TestGetAllPinnedObjects(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/pinning")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	_, err := pinningAPI.GetAllPinnedObjects(1, 10)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
 func randomString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
