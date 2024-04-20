@@ -149,3 +149,136 @@ func (p *PinningAPI) GetAllPinnedObjects(pageNumber, resultsPerPage int) (Pinned
 	}
 	return response, nil
 }
+
+func (p *PinningAPI) GetObjectByRequestID(requestID string) (string, error) {
+	p.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/s3/get-object/")
+	endpoint := fmt.Sprintf("%s%s", p.API.BaseURL, requestID)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := p.API.Client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("failed to get pinned object by request ID: %s", body)
+	}
+
+	return string(body), err
+}
+
+func (p *PinningAPI) GetPinnedObjectByRequestID(requestID string) (PinnedObject, error) {
+	p.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/pinning")
+	endpoint := fmt.Sprintf("%s/%s", p.API.BaseURL, requestID)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := p.API.Client.Do(req)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return PinnedObject{}, fmt.Errorf("failed to get pinned object by request ID: %s", body)
+	}
+
+	var pinnedObject PinnedObject
+	if err := json.Unmarshal(body, &pinnedObject); err != nil {
+		return PinnedObject{}, err
+	}
+	return pinnedObject, nil
+}
+
+func (p *PinningAPI) UpdatePinnedObject(requestID string, payload PinnedObjectPayload) (PinnedObject, error) {
+	p.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/pinning")
+	endpoint := fmt.Sprintf("%s/%s", p.API.BaseURL, requestID)
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+
+	req, err := http.NewRequest("PATCH", endpoint, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return PinnedObject{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := p.API.Client.Do(req)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return PinnedObject{}, fmt.Errorf("failed to update pinned object: %s", body)
+	}
+
+	var pinnedObject PinnedObject
+	err = json.Unmarshal(body, &pinnedObject)
+	if err != nil {
+		return PinnedObject{}, err
+	}
+
+	return pinnedObject, nil
+}
+
+func (p *PinningAPI) DeletePinnedObject(requestID string) (bool, error) {
+	p.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/pinning")
+	endpoint := fmt.Sprintf("%s/%s", p.API.BaseURL, requestID)
+
+	req, err := http.NewRequest("DELETE", endpoint, nil)
+	if err != nil {
+		return false, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := p.API.Client.Do(req)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return false, fmt.Errorf("failed to delete pinned object: %s", body)
+	}
+
+	var status bool
+	err = json.Unmarshal(body, &status)
+	if err != nil {
+		return false, err
+	}
+
+	return status, nil
+}

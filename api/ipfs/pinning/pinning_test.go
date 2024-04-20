@@ -51,6 +51,88 @@ func TestGetAllPinnedObjects(t *testing.T) {
 	}
 }
 
+// TODO, this function is passing but it always returns nothing?
+// Maybe reach out about this
+func TestGetObjectByRequestID(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/s3/get-object/")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	results, err := pinningAPI.GetAllPinnedObjects(1, 10)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	fmt.Println(results.Data[0].RequestID)
+
+	_, err = pinningAPI.GetObjectByRequestID(results.Data[0].RequestID)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestGetPinnedObjectByRequestID(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/pinning")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	results, err := pinningAPI.GetAllPinnedObjects(1, 10)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	fmt.Println(results.Data[0].RequestID)
+
+	object, err := pinningAPI.GetPinnedObjectByRequestID(results.Data[0].RequestID)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	fmt.Println(object)
+}
+
+func TestUpdatePinnedObject(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/pinning")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	results_first, err := pinningAPI.GetAllPinnedObjects(1, 10)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	fmt.Println(results_first.Data[0].RequestID)
+
+	payload := PinnedObjectPayload{
+		CID:     "QmWTqpfKyPJcGuWWg73beJJiL6FrCB5yX8qfcCF4bHanes",
+		Name:    "test_updated.png",
+		Origins: []string{},
+		Meta:    PinnedObjectPayloadMeta{},
+	}
+
+	_, err = pinningAPI.UpdatePinnedObject(results_first.Data[0].RequestID, payload)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestDeletePinnedObject(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/pinning")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	results_first, err := pinningAPI.GetAllPinnedObjects(1, 10)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	fmt.Println(results_first.Data[0].RequestID)
+
+	_, err = pinningAPI.DeletePinnedObject(results_first.Data[0].RequestID)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
 func randomString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
