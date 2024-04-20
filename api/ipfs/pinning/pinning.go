@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"strings"
 
@@ -62,6 +63,19 @@ func (o *Origins) UnmarshalJSON(data []byte) error {
 	}
 	*o = strings.Split(rawOrigins, ",")
 	return nil
+}
+
+type UploadObjectResponse struct {
+	RequestID string                   `json:"requestId"`
+	Status    string                   `json:"status"`
+	Created   string                   `json:"created"`
+	Pin       PinnedObjectPayload      `json:"pin"`
+	Info      UploadObjectResponseInfo `json:"info"`
+	Delegates []string                 `json:"delegates"`
+}
+
+type UploadObjectResponseInfo struct {
+	Size string `json:"size"`
 }
 
 type PinningAPI struct {
@@ -281,4 +295,58 @@ func (p *PinningAPI) DeletePinnedObject(requestID string) (bool, error) {
 	}
 
 	return status, nil
+}
+
+func (p *PinningAPI) UploadObject(body []byte, key, contentType string) (UploadObjectResponse, error) {
+	p.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/s3/put-object")
+	endpoint := p.API.BaseURL
+
+	requestBody := bytes.Buffer{}
+	writer := multipart.NewWriter(&requestBody)
+
+	part, err := writer.CreateFormFile("Body", "file")
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+	_, err = part.Write(body)
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+
+	// Add other form fields
+	_ = writer.WriteField("Key", key)
+	_ = writer.WriteField("ContentType", contentType)
+
+	err = writer.Close()
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+
+	req, err := http.NewRequest("POST", endpoint, &requestBody)
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	resp, err := p.API.Client.Do(req)
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+	defer resp.Body.Close()
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return UploadObjectResponse{}, fmt.Errorf("failed to upload object: %s", responseBody)
+	}
+
+	var uploadObjectResponse UploadObjectResponse
+	err = json.Unmarshal(responseBody, &uploadObjectResponse)
+	if err != nil {
+		return UploadObjectResponse{}, err
+	}
+	return uploadObjectResponse, nil
 }

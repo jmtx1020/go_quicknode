@@ -133,6 +133,23 @@ func TestDeletePinnedObject(t *testing.T) {
 	}
 }
 
+func TestUploadObject(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/s3/put-object")
+
+	pinningAPI := &PinningAPI{API: apiWrapper}
+
+	fileContent, err := os.ReadFile("test_data/grumpy.jpg")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	_, err = pinningAPI.UploadObject(fileContent, "grumpy.jpg", "image/jpeg")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
 func randomString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
