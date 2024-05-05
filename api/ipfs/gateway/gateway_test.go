@@ -45,6 +45,26 @@ func TestGetAllGateways(t *testing.T) {
 	}
 }
 
+func TestGetGatewayByName(t *testing.T) {
+	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
+
+	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/gateway")
+	gatewayAPI := &GatewayAPI{API: apiWrapper}
+
+	gateway1, err := gatewayAPI.GetAllGateways()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	gateway2, err := gatewayAPI.GetGetwayByName(gateway1[0].Name)
+	if gateway1[0].Name != gateway2.Name {
+		t.Errorf("Expected %v, got %v", gateway1[0].Name, gateway2.Name)
+	}
+}
+
 func TestUpdateGatewayByName(t *testing.T) {
 	apiToken := os.Getenv("QUICKNODE_API_TOKEN")
 

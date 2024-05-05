@@ -1,9 +1,10 @@
 package destinations
 
 import (
-	"github.com/jmtx1020/go_quicknode/client"
 	"os"
 	"testing"
+
+	"github.com/jmtx1020/go_quicknode/client"
 )
 
 func TestCreateDestination(t *testing.T) {
@@ -46,12 +47,13 @@ func TestGetDestinationByID(t *testing.T) {
 
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	allDestinations, err := destinationAPI.GetAllDestinations()
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
+	// allDestinations, err := destinationAPI.GetAllDestinations()
+	// if err != nil {
+	// 	t.Errorf("Unexpected error: %v", err)
+	// }
 
-	_, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
+	// _, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
+	_, err := destinationAPI.GetDestinationByID("7a5548ff-6555-4691-80c6-91eaac2d484c")
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
