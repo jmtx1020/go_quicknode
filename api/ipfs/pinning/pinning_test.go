@@ -81,11 +81,10 @@ func TestGetPinnedObjectByRequestID(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	object, err := pinningAPI.GetPinnedObjectByRequestID(results.Data[0].RequestID)
+	_, err = pinningAPI.GetPinnedObjectByRequestID(results.Data[0].RequestID)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	fmt.Println(object)
 }
 
 func TestUpdatePinnedObject(t *testing.T) {
