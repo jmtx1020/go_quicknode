@@ -63,7 +63,6 @@ func TestGetObjectByRequestID(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	fmt.Println(results.Data[0].RequestID)
 
 	_, err = pinningAPI.GetObjectByRequestID(results.Data[0].RequestID)
 	if err != nil {
@@ -81,7 +80,6 @@ func TestGetPinnedObjectByRequestID(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	fmt.Println(results.Data[0].RequestID)
 
 	object, err := pinningAPI.GetPinnedObjectByRequestID(results.Data[0].RequestID)
 	if err != nil {
@@ -100,7 +98,6 @@ func TestUpdatePinnedObject(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	fmt.Println(results_first.Data[0].RequestID)
 
 	payload := PinnedObjectPayload{
 		CID:     "QmWTqpfKyPJcGuWWg73beJJiL6FrCB5yX8qfcCF4bHanes",
@@ -125,7 +122,6 @@ func TestDeletePinnedObject(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-	fmt.Println(results_first.Data[0].RequestID)
 
 	_, err = pinningAPI.DeletePinnedObject(results_first.Data[0].RequestID)
 	if err != nil {

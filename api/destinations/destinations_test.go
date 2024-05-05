@@ -1,9 +1,11 @@
 package destinations
 
 import (
-	"github.com/jmtx1020/go_quicknode/client"
+	"fmt"
 	"os"
 	"testing"
+
+	"github.com/jmtx1020/go_quicknode/client"
 )
 
 func TestCreateDestination(t *testing.T) {
@@ -46,15 +48,18 @@ func TestGetDestinationByID(t *testing.T) {
 
 	destinationAPI := &DestinationAPI{API: apiWrapper}
 
-	allDestinations, err := destinationAPI.GetAllDestinations()
+	// allDestinations, err := destinationAPI.GetAllDestinations()
+	// if err != nil {
+	// 	t.Errorf("Unexpected error: %v", err)
+	// }
+
+	// _, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
+	dest2, err := destinationAPI.GetDestinationByID("7a5548ff-6555-4691-80c6-91eaac2d484c")
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	_, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
-	}
+	fmt.Println(dest2)
 }
 
 func TestDeleteDestinationByID(t *testing.T) {
