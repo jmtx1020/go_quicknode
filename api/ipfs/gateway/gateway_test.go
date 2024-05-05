@@ -51,25 +51,17 @@ func TestGetGatewayByName(t *testing.T) {
 	apiWrapper := client.NewAPIWrapper(apiToken, "https://api.quicknode.com/ipfs/rest/v1/gateway")
 	gatewayAPI := &GatewayAPI{API: apiWrapper}
 
-	randomStr := randomString(length)
-
-	gateway1, err := gatewayAPI.CreateGateway(
-		fmt.Sprintf("testing-api-%s", randomStr),
-		false,
-		false,
-	)
+	gateway1, err := gatewayAPI.GetAllGateways()
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	gateway2, err := gatewayAPI.GetGetwayByName(gateway1.Name)
-	if gateway1.Name == gateway2.Name {
-		t.Errorf("Expected %v, got %v", gateway1.Name, gateway2.Name)
-	}
-
-	err = gatewayAPI.DeleteGatewayByName(gateway2.Name)
-	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+	gateway2, err := gatewayAPI.GetGetwayByName(gateway1[0].Name)
+	if gateway1[0].Name != gateway2.Name {
+		t.Errorf("Expected %v, got %v", gateway1[0].Name, gateway2.Name)
 	}
 }
 
