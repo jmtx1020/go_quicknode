@@ -1,7 +1,6 @@
 package destinations
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -54,12 +53,10 @@ func TestGetDestinationByID(t *testing.T) {
 	// }
 
 	// _, err = destinationAPI.GetDestinationByID(allDestinations[0].ID)
-	dest2, err := destinationAPI.GetDestinationByID("7a5548ff-6555-4691-80c6-91eaac2d484c")
+	_, err := destinationAPI.GetDestinationByID("7a5548ff-6555-4691-80c6-91eaac2d484c")
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
-
-	fmt.Println(dest2)
 }
 
 func TestDeleteDestinationByID(t *testing.T) {
