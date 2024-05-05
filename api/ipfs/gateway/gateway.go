@@ -185,3 +185,36 @@ func (g *GatewayAPI) UpdateGatewayByName(gatewayName string, isPrivate, isEnable
 	}
 	return &gateway, nil
 }
+
+func (g *GatewayAPI) GetGetwayByName(gatewayName string) (Gateway, error) {
+	g.API.SetBaseURL("https://api.quicknode.com/ipfs/rest/v1/gateway")
+	endpoint := fmt.Sprintf("%s/%s", g.API.BaseURL, gatewayName)
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return Gateway{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := g.API.Client.Do(req)
+	if err != nil {
+		return Gateway{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Gateway{}, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return Gateway{}, fmt.Errorf("error: %s", body)
+	}
+
+	var gateway Gateway
+	err = json.Unmarshal(body, &gateway)
+	if err != nil {
+		return Gateway{}, err
+	}
+	return gateway, nil
+}
